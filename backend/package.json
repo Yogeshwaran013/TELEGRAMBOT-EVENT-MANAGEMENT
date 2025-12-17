@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.17.1",
+    "telegraf": "^4.16.3"
+  },
+  "name": "telegram-based-event-registration",
+  "version": "0.0.1",
+  "description": "This a Telegram Bot project which is used to Register for Events",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "telegram",
+    "tce",
+    "mca26"
+  ],
+  "author": "Ramkumar && Yogeshwaran",
+  "license": "ISC"
+}
