@@ -1,0 +1,228 @@
+/* =====================
+   GLOBAL
+===================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0e1621; /* Telegram dark background */
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* =====================
+   ROOT
+===================== */
+.home-root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* =====================
+   MAIN CONTAINER
+===================== */
+.home-card {
+  width: 90vw;
+  height: 92vh;
+  max-width: 1400px;
+  background: #17212b;
+  display: flex;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* =====================
+   SIDEBAR (Telegram)
+===================== */
+.nav {
+  width: 260px;
+  background: #1f2a37;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-right: 1px solid #243040;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #dbe4ee;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: #263545;
+}
+
+.nav-item.active {
+  background: #3390ec;
+  color: #ffffff;
+}
+
+.nav-icon {
+  font-size: 18px;
+}
+
+/* =====================
+   CONTENT AREA
+===================== */
+.home-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #17212b;
+}
+
+/* =====================
+   HEADER
+===================== */
+.home-header {
+  height: 56px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #17212b;
+  border-bottom: 1px solid #243040;
+}
+
+.home-header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e5edf5;
+  margin: 0;
+}
+
+/* =====================
+   BUTTON
+===================== */
+.refresh-btn {
+  background: #3390ec;
+  border: none;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.refresh-btn:hover {
+  background: #2b7cd3;
+}
+
+/* =====================
+   TABLE
+===================== */
+.table-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: 10px 20px;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.users-table thead th {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9fb3c8;
+  text-transform: uppercase;
+  padding: 12px 14px;
+  border-bottom: 1px solid #243040;
+}
+
+/* Column width hints to make header/cells align neatly */
+.users-table thead th:nth-child(1) { width: 12%; }
+.users-table thead th:nth-child(2) { width: 24%; }
+.users-table thead th:nth-child(3) { width: 16%; }
+.users-table thead th:nth-child(4) { width: 8%; }
+.users-table thead th:nth-child(5) { width: 30%; }
+.users-table thead th:nth-child(6) { width: 10%; }
+
+.users-table tbody td {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #dbe4ee;
+  border-bottom: 1px solid #1f2a37;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  text-align: center;
+}
+.users-table tbody tr:hover {
+  background: #1f2a37;
+}
+
+/* =====================
+   FEEDBACK CELL
+===================== */
+.feedback-cell {
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Broadcast textarea: dark Telegram style */
+.broadcast-panel textarea {
+  width: 100%;
+  padding: 12px;
+  background: #0f1720;
+  color: #e5edf5;
+  border: 1px solid #243040;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+/* =====================
+   TEXT STATES
+===================== */
+.muted {
+  color: #8fa2b8;
+}
+
+.error {
+  color: #ff6b6b;
+  margin-top: 8px;
+}
+
+/* =====================
+   SCROLLBAR (Telegram style)
+===================== */
+.table-wrap::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background: #2b3a4d;
+  border-radius: 6px;
+}
+
+/* =====================
+   MOBILE
+===================== */
+@media (max-width: 768px) {
+  .home-card {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .nav {
+    display: none;
+  }
+}

@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { Telegraf, Markup, session, Scenes } from 'telegraf';
@@ -41,6 +42,8 @@ async function loadSettings() {
 
 }
 await loadSettings();
+
+console.log('Loaded ADMIN_IDS:', ADMIN_IDS);
 
 
 const userSchema = new mongoose.Schema({
@@ -220,14 +223,68 @@ bot.command('info', async (ctx) => {
 
 const app = express();
 app.use(express.json());
+// Configure CORS to allow dev origins or use an env var (comma-separated)
+const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:5174').split(',')
+app.use(cors({
+  origin: (origin, callback) => {
+    // allow requests with no origin (like curl or server-to-server)
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes(origin)) return callback(null, true)
+    return callback(null, false)
+  },
+  optionsSuccessStatus: 200
+}))
 
 app.get('/users', async (req, res) => {
-  const users = await User.find().lean();
-  res.json(users);
+  try {
+    const batch = req.query.batch ? Number(req.query.batch) : null
+    const limit = req.query.limit ? parseInt(req.query.limit, 10) : 0
+    const q = batch ? { batch } : {}
+    const query = User.find(q).sort({ createdAt: -1 }).lean()
+    if (limit > 0) query.limit(limit)
+    const users = await query.exec()
+    res.json(users)
+  } catch (err) {
+    console.error('Error fetching users', err)
+    res.status(500).json({ error: 'Failed to fetch users' })
+  }
 });
+
+// Broadcast message to users (no admin ID required). Accepts optional `batch` in body to target specific batch.
+app.post('/broadcast', async (req, res) => {
+  try {
+    const { batch, message } = req.body
+    if (!message || typeof message !== 'string') return res.status(400).json({ error: 'message required' })
+
+    let q = {}
+    if (batch !== undefined && batch !== null && batch !== '' ) {
+      const b = Number(batch)
+      if (b === 1 || b === 2) q = { batch: b }
+    }
+
+    const users = await User.find(q).lean()
+
+    const results = { sent: 0, failed: 0, failures: [] }
+    for (const u of users) {
+      try {
+        await bot.telegram.sendMessage(u._id, message)
+        results.sent++
+      } catch (err) {
+        results.failed++
+        results.failures.push({ id: u._id, error: String(err.message || err) })
+      }
+    }
+
+    res.json(results)
+  } catch (err) {
+    console.error('Broadcast error', err)
+    res.status(500).json({ error: 'Broadcast failed' })
+  }
+})
 
 bot.command('set_feedback', async (ctx) => {
   if (!ADMIN_IDS.includes(ctx.from.id)) {
+    console.log(ADMIN_IDS)
     return;
   }
 
@@ -274,7 +331,9 @@ bot.on('text', async (ctx,next) => {
 bot.hears(/hi|hello/i, (ctx) => ctx.reply(`Hi ${ctx.from.first_name || ''}!`));
 
 bot.command('add_admin', async (ctx) => {
-  if (!ADMIN_IDS.includes(ctx.from.id)) {
+  const callerId = Number(ctx.from.id);
+  if (!ADMIN_IDS.includes(callerId)) {
+    await ctx.reply('❌ Unauthorized — only admins can add other admins.');
     return;
   }
 
@@ -286,6 +345,8 @@ bot.command('add_admin', async (ctx) => {
     ADMIN_IDS.push(id);
     await saveSettings();
     ctx.reply(`✅ Added admin: ${id}`);
+  } else {
+    ctx.reply(`ℹ️ ID ${id} is already an admin.`);
   }
 });
 
